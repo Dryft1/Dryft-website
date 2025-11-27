@@ -194,3 +194,13 @@ body {
 }
 
 .newsletter-popup.is-visible { display: flex; }
+
+.page-width {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 16px;
+}
+
+.welcome {
+  text-align: center;
+}
