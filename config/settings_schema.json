@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Colors",
+    "settings": [
+      { "type": "color", "id": "color_background", "label": "Background", "default": "#ffffff" },
+      { "type": "color", "id": "color_text", "label": "Text", "default": "#111111" },
+      { "type": "color", "id": "color_accent", "label": "Accent", "default": "#111111" }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      { "type": "text", "id": "typography_body", "label": "Body font stack", "default": "Inter, system-ui, sans-serif" },
+      { "type": "text", "id": "typography_heading", "label": "Heading font stack", "default": "Playfair Display, Georgia, serif" }
+    ]
+  },
+  {
+    "name": "Buttons",
+    "settings": [
+      { "type": "range", "id": "button_radius", "label": "Border radius", "min": 0, "max": 20, "step": 1, "unit": "px", "default": 4 }
+    ]
+  },
+  {
+    "name": "Newsletter popup",
+    "settings": [
+      { "type": "checkbox", "id": "newsletter_popup_enable", "label": "Enable newsletter popup", "default": true },
+      { "type": "text", "id": "newsletter_popup_heading", "label": "Heading", "default": "Join our list" },
+      { "type": "textarea", "id": "newsletter_popup_copy", "label": "Copy", "default": "Subscribe for updates, product drops, and stories from the studio." },
+      { "type": "text", "id": "newsletter_popup_button_label", "label": "Button label", "default": "Sign up" }
+    ]
+  }
+]
