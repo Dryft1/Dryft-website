@@ -1,0 +1,80 @@
+{%- if settings.newsletter_popup_enable and section.blocks.size > 0 -%}
+  {%- assign popup_block = section.blocks.first -%}
+  <div class="newsletter-popup" id="NewsletterPopup" role="dialog" aria-modal="true" aria-label="Newsletter popup">
+    <div class="newsletter-popup__dialog" {{ popup_block.shopify_attributes }}>
+      <button type="button" class="newsletter-popup__close" aria-label="Close popup">×</button>
+      <h2>{{ popup_block.settings.heading | default: settings.newsletter_popup_heading }}</h2>
+      <p>{{ popup_block.settings.copy | default: settings.newsletter_popup_copy }}</p>
+      {%- form 'customer', id: 'PopupNewsletterForm', class: 'newsletter-popup__form' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter,popup">
+        <label class="visually-hidden" for="PopupNewsletterEmail">{{ 'newsletter.label' | t }}</label>
+        <input id="PopupNewsletterEmail" type="email" name="contact[email]" placeholder="Enter your email" required>
+        <button type="submit">{{ popup_block.settings.button_label | default: settings.newsletter_popup_button_label }}</button>
+        {%- if form.posted_successfully? -%}
+          <p class="newsletter-popup__success">{{ 'newsletter.success' | t }}</p>
+        {%- elsif form.errors -%}
+          <p class="newsletter-popup__error">{{ form.errors.messages['email'] }}</p>
+        {%- endif -%}
+      {%- endform -%}
+    </div>
+  </div>
+{%- endif -%}
+
+<script>
+  (() => {
+    const popup = document.getElementById('NewsletterPopup');
+    if (!popup) return;
+
+    const closeButton = popup.querySelector('.newsletter-popup__close');
+    const form = popup.querySelector('form');
+    const dismissedKey = 'newsletter_popup_dismissed';
+    const shouldShow = !localStorage.getItem(dismissedKey);
+
+    function closePopup() {
+      popup.classList.remove('is-visible');
+      localStorage.setItem(dismissedKey, 'true');
+    }
+
+    if (shouldShow) {
+      window.setTimeout(() => popup.classList.add('is-visible'), 1200);
+    }
+
+    closeButton?.addEventListener('click', closePopup);
+    popup.addEventListener('click', (event) => {
+      if (event.target === popup) {
+        closePopup();
+      }
+    });
+
+    form?.addEventListener('submit', () => {
+      closePopup();
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Newsletter popup",
+  "blocks": [
+    {
+      "type": "popup",
+      "name": "Popup",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading" },
+        { "type": "textarea", "id": "copy", "label": "Copy" },
+        { "type": "text", "id": "button_label", "label": "Button label" }
+      ]
+    }
+  ],
+  "max_blocks": 1,
+  "presets": [
+    {
+      "name": "Newsletter popup",
+      "blocks": [
+        { "type": "popup" }
+      ]
+    }
+  ]
+}
+{% endschema %}

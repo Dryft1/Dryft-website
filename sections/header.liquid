@@ -1,0 +1,200 @@
+<header class="site-header" role="banner">
+  <div class="header__inner">
+    <button class="header__drawer-toggle" type="button" aria-controls="MobileDrawer" aria-expanded="false">
+      <span class="visually-hidden">Toggle navigation</span>
+      <span class="drawer-icon" aria-hidden="true">☰</span>
+    </button>
+
+    <div class="header__logo">
+      <a href="{{ routes.root_url }}" class="header__logo-link">
+        {%- if section.settings.logo != blank -%}
+          <img src="{{ section.settings.logo | image_url: width: 240 }}" alt="{{ shop.name | escape }}" loading="lazy">
+        {%- else -%}
+          <span class="header__logo-text">{{ shop.name }}</span>
+        {%- endif -%}
+      </a>
+    </div>
+
+    {%- if section.settings.menu -%}
+      <nav class="header__nav" role="navigation">
+        <ul class="header__menu">
+          {%- for link in section.settings.menu.links -%}
+            {%- assign mega_menu = section.blocks | where: 'settings.parent_link_title', link.title | first -%}
+            <li class="header__menu-item{% if mega_menu or link.links.size > 0 %} has-children{% endif %}">
+              <a href="{{ link.url }}" class="header__menu-link">{{ link.title }}</a>
+              {%- if mega_menu or link.links.size > 0 -%}
+                <div class="header__submenu{% if mega_menu %} header__submenu--mega{% endif %}">
+                  <div class="submenu__inner">
+                    {%- if mega_menu -%}
+                      <div class="mega-menu__grid">
+                        {%- if link.links.size > 0 -%}
+                          {%- for child_link in link.links -%}
+                            <div class="mega-menu__column">
+                              <a class="mega-menu__title" href="{{ child_link.url }}">{{ child_link.title }}</a>
+                              {%- if child_link.links.size > 0 -%}
+                                <ul class="mega-menu__list">
+                                  {%- for grandchild_link in child_link.links -%}
+                                    <li><a href="{{ grandchild_link.url }}">{{ grandchild_link.title }}</a></li>
+                                  {%- endfor -%}
+                                </ul>
+                              {%- endif -%}
+                            </div>
+                          {%- endfor -%}
+                        {%- endif -%}
+                        {%- if mega_menu.settings.featured_menu -%}
+                          <div class="mega-menu__column mega-menu__column--featured">
+                            <p class="mega-menu__title">{{ mega_menu.settings.featured_menu_title }}</p>
+                            <ul class="mega-menu__list">
+                              {%- for featured_link in mega_menu.settings.featured_menu.links -%}
+                                <li><a href="{{ featured_link.url }}">{{ featured_link.title }}</a></li>
+                              {%- endfor -%}
+                            </ul>
+                          </div>
+                        {%- endif -%}
+                        {%- if mega_menu.settings.featured_image != blank or mega_menu.settings.promo_text != blank -%}
+                          <div class="mega-menu__column mega-menu__column--promo">
+                            {%- if mega_menu.settings.featured_image != blank -%}
+                              <a href="{{ mega_menu.settings.featured_link }}" class="mega-menu__image">
+                                <img src="{{ mega_menu.settings.featured_image | image_url: width: 420 }}" alt="{{ mega_menu.settings.featured_image.alt | escape }}" loading="lazy">
+                              </a>
+                            {%- endif -%}
+                            {%- if mega_menu.settings.promo_text != blank -%}
+                              <div class="mega-menu__promo" aria-label="Promotion">
+                                {{ mega_menu.settings.promo_text }}
+                              </div>
+                            {%- endif -%}
+                          </div>
+                        {%- endif -%}
+                      </div>
+                    {%- else -%}
+                      {%- if link.links.size > 0 -%}
+                        <ul class="submenu__list">
+                          {%- for child_link in link.links -%}
+                            <li><a href="{{ child_link.url }}">{{ child_link.title }}</a></li>
+                          {%- endfor -%}
+                        </ul>
+                      {%- endif -%}
+                    {%- endif -%}
+                  </div>
+                </div>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      </nav>
+    {%- endif -%}
+
+    <div class="header__actions">
+      {%- if section.settings.show_search -%}
+        <form action="{{ routes.search_url }}" method="get" role="search" class="header__search">
+          <label class="visually-hidden" for="HeaderSearch">Search</label>
+          <input id="HeaderSearch" type="search" name="q" placeholder="Search" value="{{ search.terms | escape }}">
+        </form>
+      {%- endif -%}
+      <a class="header__cart" href="{{ routes.cart_url }}" aria-label="Cart">Cart ({{ cart.item_count }})</a>
+    </div>
+  </div>
+
+  <div id="MobileDrawer" class="mobile-drawer" hidden>
+    <div class="mobile-drawer__header">
+      <span>{{ 'general.navigation' | t }}</span>
+      <button type="button" class="mobile-drawer__close" aria-label="Close navigation">×</button>
+    </div>
+    {%- assign drawer_menu = section.settings.mobile_menu | default: section.settings.menu -%}
+    {%- if drawer_menu -%}
+      <ul class="mobile-drawer__list">
+        {%- for link in drawer_menu.links -%}
+          <li>
+            <details class="mobile-drawer__item" {% if forloop.first %}open{% endif %}>
+              <summary><a href="{{ link.url }}">{{ link.title }}</a></summary>
+              {%- if link.links.size > 0 -%}
+                <ul>
+                  {%- for child_link in link.links -%}
+                    <li><a href="{{ child_link.url }}">{{ child_link.title }}</a></li>
+                  {%- endfor -%}
+                </ul>
+              {%- endif -%}
+            </details>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Main menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "link_list",
+      "id": "mobile_menu",
+      "label": "Mobile menu (optional)",
+      "info": "Defaults to the main menu when not set"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show search",
+      "default": true
+    }
+  ],
+  "max_blocks": 4,
+  "blocks": [
+    {
+      "type": "mega_menu",
+      "name": "Mega menu",
+      "settings": [
+        {
+          "type": "text",
+          "id": "parent_link_title",
+          "label": "Parent menu item title",
+          "info": "Matches the menu item that should trigger this mega menu"
+        },
+        {
+          "type": "link_list",
+          "id": "featured_menu",
+          "label": "Featured menu"
+        },
+        {
+          "type": "text",
+          "id": "featured_menu_title",
+          "label": "Featured menu heading",
+          "default": "Featured"
+        },
+        {
+          "type": "image_picker",
+          "id": "featured_image",
+          "label": "Promo image"
+        },
+        {
+          "type": "url",
+          "id": "featured_link",
+          "label": "Promo link"
+        },
+        {
+          "type": "richtext",
+          "id": "promo_text",
+          "label": "Promo copy"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Header"
+    }
+  ]
+}
+{% endschema %}
