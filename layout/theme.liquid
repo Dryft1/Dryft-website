@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>{{ page_title | escape }}{% unless page_title contains shop.name %} – {{ shop.name | escape }}{% endunless %}</title>
+    <meta name="description" content="{{ page_description | escape }}">
+    {{ content_for_header }}
+    {{ 'theme.css' | asset_url | stylesheet_tag }}
+  </head>
+  <body class="template-{{ template | handle }}">
+    <a class="skip-to-content" href="#MainContent">Skip to content</a>
+
+    {{ section 'header' }}
+
+    <main id="MainContent" role="main">
+      {{ content_for_layout }}
+    </main>
+
+    {{ section 'footer' }}
+    {{ section 'newsletter-popup' }}
+
+    {{ 'theme.js' | asset_url | script_tag }}
+  </body>
+</html>
